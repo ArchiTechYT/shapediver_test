@@ -19,7 +19,8 @@ const server = http.createServer((req, res) => {
     }
 });
 
-const PORT = 3000;
+// Use the PORT environment variable or default to 3000 if running locally
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
