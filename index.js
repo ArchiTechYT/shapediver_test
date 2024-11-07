@@ -3,20 +3,27 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
-    if (req.url === '/') {
-        fs.readFile(path.join(__dirname, 'index.html'), (err, content) => {
-            if (err) {
-                res.writeHead(500);
-                res.end('Error loading the page.');
+    // Set the file path, defaulting to index.html if root is requested
+    const filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
+
+    // Serve the file if it exists
+    fs.readFile(filePath, (err, content) => {
+        if (err) {
+            // If file not found, serve a 404 response
+            if (err.code === 'ENOENT') {
+                res.writeHead(404, { 'Content-Type': 'text/html' });
+                res.end('<h1>404 Not Found</h1>');
             } else {
-                res.writeHead(200, { 'Content-Type': 'text/html' });
-                res.end(content);
+                // For other errors, serve a 500 response
+                res.writeHead(500);
+                res.end('<h1>Server Error</h1>');
             }
-        });
-    } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('404 Not Found');
-    }
+        } else {
+            // Serve the HTML file
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(content);
+        }
+    });
 });
 
 // Use the PORT environment variable or default to 3000 if running locally
