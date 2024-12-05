@@ -1,0 +1,1 @@
+node .\index.js -> it should run at localhost:3000
